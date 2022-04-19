@@ -1,6 +1,7 @@
 #pragma once
 #include <vector>
 #include <string_view>
+#include <array>
 
 std::vector<std::string_view> split_by(std::string_view str, char d);
 std::array<int,4> split(std::string_view str, char d);
