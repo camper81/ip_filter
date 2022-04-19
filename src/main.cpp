@@ -1,7 +1,7 @@
 #include <iostream>
 #include <string>
 
-#include "../include/ip_filter.h"
+#include "ip_filter.h"
 
 int main(int argc, char const *argv[])
 {

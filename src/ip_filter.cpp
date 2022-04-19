@@ -2,15 +2,14 @@
 #include <iostream>
 
 #include <string>
-
 #include <algorithm>
-
 
 #include <charconv>
 #include <ranges>
 
-#include "../include/ip_filter.h"
+#include "ip_filter.h"
 
+// pool to storage parts of ip
 std::vector<std::vector<int>> ip_pool;
 
 // ("",  '.') -> [""]
@@ -43,7 +42,9 @@ std::vector<int> split(std::string_view str, char d)
     return result;
 }
 
-std::ostream& print(std::ostream& os, const std::vector<int>& vec){
+std::ostream& print(std::ostream& os, const std::vector<int>& vec) {
+    assert(vec.size() == 4);
+
     os << vec[0] << "." << vec[1] << "." << vec[2] << "." << vec[3];
     return os;
 }
@@ -55,7 +56,6 @@ void print_pool() {
 
 void filter_by_one(const std::vector<std::vector<int>>& vec, int arg0){
     for(auto& v : vec | std::views::filter([&arg0](std::vector<int> num){
-
         return num[0] == arg0;}))
         print(std::cout, v) << std::endl;
 }
@@ -91,6 +91,8 @@ void filter_any(int arg) {
 void sort_pool() {
     std::sort(ip_pool.begin(), ip_pool.end(), [](std::vector<int>& lhs, std::vector<int>& rhs)
     {
+        assert((lhs.size() & rhs.size()) == 4);
+
         return std::tie(lhs[0],lhs[1],lhs[2],lhs[3]) > std::tie(rhs[0],rhs[1],rhs[2],rhs[3]);
     });
 }
