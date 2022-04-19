@@ -43,11 +43,21 @@ std::vector<int> split(std::string_view str, char d)
     return result;
 }
 
+std::ostream& print(std::ostream& os, const std::vector<int>& vec){
+    os << vec[0] << "." << vec[1] << "." << vec[2] << "." << vec[3];
+    return os;
+}
+
+void print_pool() {
+    for(auto& v : ip_pool)
+        print(std::cout, v) << std::endl;
+}
+
 void filter_by_one(const std::vector<std::vector<int>>& vec, int arg0){
     for(auto& v : vec | std::views::filter([&arg0](std::vector<int> num){
 
         return num[0] == arg0;}))
-        std::cout << v[0] << "." << v[1] << "." << v[2] << "." << v[3] << std::endl;
+        print(std::cout, v) << std::endl;
 }
 
 void filter_by_two(const std::vector<std::vector<int>>& vec, int arg0, int arg1){
@@ -55,7 +65,7 @@ void filter_by_two(const std::vector<std::vector<int>>& vec, int arg0, int arg1)
 
         return (num[0] == arg0 && num[1] == arg1);
     }))
-        std::cout << v[0] << "." << v[1] << "." << v[2] << "." << v[3] << std::endl;
+        print(std::cout, v) << std::endl;
 }
 
 void filter_by_any(const std::vector<std::vector<int>>& vec, int arg){
@@ -63,7 +73,7 @@ void filter_by_any(const std::vector<std::vector<int>>& vec, int arg){
 
         return (num[0] == arg || num[1] == arg || num[2] == arg || num[3] == arg);
     }))
-        std::cout << v[0] << "." << v[1] << "." << v[2] << "." << v[3] << std::endl;
+        print(std::cout, v) << std::endl;
 }
 
 void filter(int arg) {
@@ -78,22 +88,17 @@ void filter_any(int arg) {
     filter_by_any(ip_pool, arg);
 }
 
-void parse_string(const std::vector<std::string>& ip_strings) {
+void sort_pool() {
+    std::sort(ip_pool.begin(), ip_pool.end(), [](std::vector<int>& lhs, std::vector<int>& rhs)
+    {
+        return std::tie(lhs[0],lhs[1],lhs[2],lhs[3]) > std::tie(rhs[0],rhs[1],rhs[2],rhs[3]);
+    });
+}
+
+void update_pool(const std::vector<std::string>& ip_strings) {
     for(auto& str : ip_strings)
     {
         std::vector<std::string_view> v = split_by(str, '\t');
         ip_pool.emplace_back(split(v.at(0), '.'));
     }
-
-    std::sort(ip_pool.begin(), ip_pool.end(), [](std::vector<int>& lhs, std::vector<int>& rhs)
-    {
-        return std::tie(lhs[0],lhs[1],lhs[2],lhs[3]) > std::tie(rhs[0],rhs[1],rhs[2],rhs[3]);
-    });
-
-    print_all(ip_pool);
-}
-
-void print_all(const std::vector<std::vector<int>>& vec) {
-    for(auto& v : vec)
-        std::cout << v[0] << "." << v[1] << "." << v[2] << "." << v[3] << std::endl;
 }

@@ -22,7 +22,9 @@ int main(int argc, char const *argv[])
         // 1.29.168.152
         // 1.1.234.8
 
-        parse_string(ip_strings);
+        update_pool(ip_strings);
+        sort_pool();
+        print_pool();
 
         // 1.231.69.33
         // 1.87.203.225
