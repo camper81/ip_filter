@@ -1,6 +1,7 @@
 #include <cassert>
 #include <iostream>
 
+#include <array>
 #include <string>
 #include <algorithm>
 
@@ -9,8 +10,11 @@
 
 #include "ip_filter.h"
 
+using IpPoolType = std::vector<std::array<int,4>>;
+using IpParts = std::array<int,4>;
+
 // pool to storage parts of ip
-std::vector<std::vector<int>> ip_pool;
+IpPoolType ip_pool;
 
 // ("",  '.') -> [""]
 // ("11", '.') -> ["11"]
@@ -29,20 +33,20 @@ std::vector<std::string_view> split_by(std::string_view str, char d)
     return result;
 }
 
-std::vector<int> split(std::string_view str, char d)
+IpParts split(std::string_view str, char d)
 {
-    std::vector<int> result;
-    int num;
+    std::array<int,4> result;
+    int num, sp = 0;
     while (!str.empty()) {
         size_t pos = str.find(d);
         std::from_chars(str.data(), pos != str.npos ? str.data()+ pos : str.data()+ str.size(), num);
-        result.emplace_back(num);
+        result[sp++] = num;
         str.remove_prefix(pos != str.npos ? pos + 1 : str.size());
     }
     return result;
 }
 
-std::ostream& print(std::ostream& os, const std::vector<int>& vec) {
+std::ostream& print(std::ostream& os, const IpParts& vec) {
     assert(vec.size() == 4);
 
     os << vec[0] << "." << vec[1] << "." << vec[2] << "." << vec[3];
@@ -54,22 +58,22 @@ void print_pool() {
         print(std::cout, v) << std::endl;
 }
 
-void filter_by_one(const std::vector<std::vector<int>>& vec, int arg0){
-    for(auto& v : vec | std::views::filter([&arg0](std::vector<int> num){
+void filter_by_one(const IpPoolType& vec, int arg0){
+    for(auto& v : vec | std::views::filter([&arg0](IpParts num){
         return num[0] == arg0;}))
         print(std::cout, v) << std::endl;
 }
 
-void filter_by_two(const std::vector<std::vector<int>>& vec, int arg0, int arg1){
-    for(auto& v : vec | std::views::filter([&arg0, &arg1](std::vector<int> num){
+void filter_by_two(const IpPoolType& vec, int arg0, int arg1){
+    for(auto& v : vec | std::views::filter([&arg0, &arg1](IpParts num){
 
         return (num[0] == arg0 && num[1] == arg1);
     }))
         print(std::cout, v) << std::endl;
 }
 
-void filter_by_any(const std::vector<std::vector<int>>& vec, int arg){
-    for(auto& v : vec | std::views::filter([&arg](std::vector<int> num){
+void filter_by_any(const IpPoolType& vec, int arg){
+    for(auto& v : vec | std::views::filter([&arg](IpParts num){
 
         return (num[0] == arg || num[1] == arg || num[2] == arg || num[3] == arg);
     }))
@@ -89,7 +93,7 @@ void filter_any(int arg) {
 }
 
 void sort_pool() {
-    std::sort(ip_pool.begin(), ip_pool.end(), [](std::vector<int>& lhs, std::vector<int>& rhs)
+    std::sort(ip_pool.begin(), ip_pool.end(), [](IpParts& lhs, IpParts& rhs)
     {
         assert((lhs.size() & rhs.size()) == 4);
 
