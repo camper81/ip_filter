@@ -5,12 +5,58 @@
 #include <algorithm>
 
 #include <charconv>
-#include <ranges>
-
 #include "ip_filter.h"
 
 using IpPoolType = std::vector<std::array<int,4>>;
 using IpParts = std::array<int,4>;
+
+#ifdef CXX20
+#include <ranges>
+
+void filter_by_one(const IpPoolType& vec, int arg0){
+    for(auto& v : vec | std::views::filter([&arg0](IpParts num){
+        return num[0] == arg0;}))
+        print(std::cout, v) << std::endl;
+}
+
+void filter_by_two(const IpPoolType& vec, int arg0, int arg1){
+    for(auto& v : vec | std::views::filter([&arg0, &arg1](IpParts num){
+
+        return (num[0] == arg0 && num[1] == arg1);
+    }))
+        print(std::cout, v) << std::endl;
+}
+
+void filter_by_any(const IpPoolType& vec, int arg){
+    for(auto& v : vec | std::views::filter([&arg](IpParts num){
+
+        return (num[0] == arg || num[1] == arg || num[2] == arg || num[3] == arg);
+    }))
+        print(std::cout, v) << std::endl;
+}
+#else
+void filter_by_one(const IpPoolType& vec, int arg0){
+    std::for_each(vec.begin(), vec.end(), [&arg0](const IpParts& part){
+        if(part[0] == arg0)
+            print(std::cout, part) << std::endl;
+    });
+
+}
+
+void filter_by_two(const IpPoolType& vec, int arg0, int arg1){
+    std::for_each(vec.begin(), vec.end(), [&arg0, &arg1](const IpParts& part){
+        if(part[0] == arg0 && part[1] == arg1)
+            print(std::cout, part) << std::endl;
+    });
+}
+
+void filter_by_any(const IpPoolType& vec, int arg){
+    std::for_each(vec.begin(), vec.end(), [&arg](const IpParts& part){
+        if(part[0] == arg || part[1] == arg || part[2] == arg || part[3] == arg)
+            print(std::cout, part) << std::endl;
+    });
+}
+#endif
 
 // pool to storage parts of ip
 IpPoolType ip_pool;
@@ -54,30 +100,10 @@ std::ostream& print(std::ostream& os, const IpParts& vec) {
 
 void print_pool() {
     for(auto& v : ip_pool)
-        print(std::cout, v) << std::endl;
+        print(std::cout, v) << '\n';
 }
 
-void filter_by_one(const IpPoolType& vec, int arg0){
-    for(auto& v : vec | std::views::filter([&arg0](IpParts num){
-        return num[0] == arg0;}))
-        print(std::cout, v) << std::endl;
-}
 
-void filter_by_two(const IpPoolType& vec, int arg0, int arg1){
-    for(auto& v : vec | std::views::filter([&arg0, &arg1](IpParts num){
-
-        return (num[0] == arg0 && num[1] == arg1);
-    }))
-        print(std::cout, v) << std::endl;
-}
-
-void filter_by_any(const IpPoolType& vec, int arg){
-    for(auto& v : vec | std::views::filter([&arg](IpParts num){
-
-        return (num[0] == arg || num[1] == arg || num[2] == arg || num[3] == arg);
-    }))
-        print(std::cout, v) << std::endl;
-}
 
 void filter(int arg) {
     filter_by_one(ip_pool, arg);

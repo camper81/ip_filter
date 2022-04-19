@@ -32,7 +32,7 @@ int main(int argc, char const *argv[])
         // 1.29.168.152
         // 1.1.234.8
 
-        std::cout << "------------------" << std::endl;
+        //std::cout << "------------------" << std::endl;
         filter(1);
 
         // 46.70.225.39
@@ -40,7 +40,7 @@ int main(int argc, char const *argv[])
         // 46.70.113.73
         // 46.70.29.76
 
-        std::cout << "------------------" << std::endl;
+        //std::cout << "------------------" << std::endl;
         // filter by first and second bytes and output
         filter(46, 70);
 
@@ -79,7 +79,7 @@ int main(int argc, char const *argv[])
         // 39.46.86.85
         // 5.189.203.46
 
-        std::cout << "------------------" << std::endl;
+        //std::cout << "------------------" << std::endl;
         // filter by any byte and output
         filter_any(46);
     }
